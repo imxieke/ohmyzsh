@@ -2,7 +2,7 @@
 
 PWD=$(pwd)
 REPO="https://github.com/robbyrussell/oh-my-zsh"
-NEWREPO="git@github.com:imxieke/ohmyzsh.git"
+NEWREPO="https://github.com/imxieke/ohmyzsh.git"
 
 if [[ ! -z $(uname -s | grep Darwin ) ]]; then
 	PLUGIN="osx zsh-autosuggestions git docker fast-syntax-highlighting"
@@ -10,7 +10,7 @@ else
 	PLUGIN="zsh-autosuggestions git docker fast-syntax-highlighting"
 fi
 
-function build_zsh()
+build_zsh()
 {
 	git clone --depth=1 ${REPO} zsh
 	rm -fr zsh/.git
@@ -27,4 +27,26 @@ function build_zsh()
 	git add -A && git commit -m "$(date +%Y-%m-%-d\ %H:%M:%S)" && git push
 }
 
-build_zsh
+deploy()
+{
+	if [[ ! -f ${HOME}/.zshrc ]]; then
+		echo "Checking  Exist Zsh Config file"
+		rm -fr ${HOME}/.oh-my-zsh
+		git clone --depth=1 ${NEWREPO} ${HOME}/.oh-my-zsh
+		cp templates/zshrc.zsh-template ${HOME}/.zshrc
+		" Enable Oh my zsh"
+		zsh
+	fi
+}
+
+case $1 in
+	build )
+		build_zsh
+		;;
+	deploy )
+		deploy
+		;;
+	* )
+		echo "Command build | deploy"
+		;;
+esac
